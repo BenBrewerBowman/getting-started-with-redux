@@ -9,15 +9,26 @@ class ToDoApp extends Component {
     render() {
         return (
             <div>
+                <input ref={node => {
+                  this.input = node;
+                }} />
                 <button onClick={() => {
                     store.dispatch({
                         type: 'ADD_TODO',
-                        text: 'Test',
+                        text: this.input.value,
                         id: nextTodoId++
                     });
+                    this.input.value = '';
                 }}>
                     Add Todo
                 </button>
+                <ul>
+                  {this.props.todos.map(todo =>
+                    <li key={todo.id}>
+                      {todo.text}
+                    </li>
+                  )}
+                </ul>
             </div>
         );
     }
@@ -26,7 +37,9 @@ class ToDoApp extends Component {
 
 const render = () => {
     ReactDOM.render(
-        <ToDoApp />,
+        <ToDoApp
+          todos={store.getState().todos}
+        />,
         document.getElementById('root')
     );
 };
