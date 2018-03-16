@@ -1,7 +1,5 @@
-const { createStore } = Redux;
-const store = createStore(todoApp);
-
 const { Component } = React;
+
 
 const Footer = () => {
   <p>
@@ -112,7 +110,7 @@ const TodoList = ({
 )
 
 let nextTodoId = 0;
-const AddTodo = () => {
+const AddTodo = ( props, { store } ) => {
   let input;
 
   return (
@@ -132,6 +130,9 @@ const AddTodo = () => {
       </button>
     </div>
   );
+}
+AddTodo.contextTypes = {
+  store: React.PropTypes.object
 }
 
 const getVisibleTodos = (
@@ -166,6 +167,7 @@ class VisibleTodoList extends Component {
 
   render() {
     const props = this.props;
+    const {store} = this.context;
     const state = store.getState;
 
     return (
@@ -200,13 +202,29 @@ const ToDoApp = ({
   </div>
 );
 
+class Provider extends Component {
+  getChildContext() {
+    return {
+      store: this.props.store
+    }
+  }
+
+  render() {
+    return this.props.children;
+  }
+}
+Provider.childContextTypes = {
+  store: React.PropTypes.object
+}
+
+const { createStore } = Redux;
 
 const render = () => {
     ReactDOM.render(
-        <ToDoApp
-          {...store.getState()}
-        />,
-        document.getElementById('root')
+      <Provider store = {createStore(todoApp)}>
+        <ToDoApp />
+      </Provider>,
+      document.getElementById('root')
     );
 };
 
