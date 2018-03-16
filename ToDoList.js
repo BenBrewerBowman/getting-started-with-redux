@@ -153,6 +153,31 @@ const getVisibleTodos = (
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    todos: getVisibleTodos (
+        state.todos,
+        state.visibilityFilter
+    )
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onTodoClick: (id) =>
+      store.dispatch({
+        type: 'TOGGLE_TODO',
+        id: id
+      })
+  };
+}
+
+const { connect } = ReactRedux;
+const VisibleTodoList = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TodoList);
+
 class VisibleTodoList extends Component {
 
   componentDidMount() {
@@ -172,19 +197,6 @@ class VisibleTodoList extends Component {
 
     return (
       <TodoList 
-        todos={
-          getVisibleTodos(
-            state.todos,
-            state.visibilityFilter
-          )
-        }
-        onTodoClick={ id =>
-          store.dispatch({
-            type: 'TOGGLE_TODO',
-            id: id
-          })
-
-        }
       />
     );
   }
@@ -218,6 +230,7 @@ Provider.childContextTypes = {
 }
 
 const { createStore } = Redux;
+const { Provider } = ReactRedux;
 
 const render = () => {
     ReactDOM.render(
